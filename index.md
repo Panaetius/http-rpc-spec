@@ -7,10 +7,15 @@ This is the specification for HTTP-RPC, an architectural style for modeling web 
 At its core, HTTP-RPC defines how endpoints should be structured and how to interact with them and with each other, how errors should be handled, how data exchange happens and how this get documented.
 
 ### Overview
-HTTP-RPC is a standard for creating resource-oriented service endpoints that support RPC style interaction. It defines how these endpoints should be structured and organized, the base schemas to use in communication, how errors are handled and how these services can be self-describing and machine consumable.
+
+HTTP-RPC is a standard for creating resource-oriented service endpoints that support RPC style interaction. It defines how these endpoints should be structured and organized, the base schemas to use in communication, how errors are handled and how these services can be self-describing and machine consumable. The aim is to combine the best of both worlds, being able to draw on the myriad of tool available in the HTTP/REST while benefitting from the flexibility that RPC offers, but limiting how it can be implemented to encourage implementations to stay as homogeneous as possible, improving portability over existing RPC approaches.
 
 ### Data Exchange Format
 
 HTTP-RPC uses [Avro](https://avro.apache.org/) as its data exchange format. Avro itself already defines ways of RPC communication, but HTTP-RPC aims to fit the context of modern service-oriented architectures better than a single-point RPC service like Avros can. It also tries to cover use-cases that are left unspecified in an RPC specification like Avro.
 
 Avro is used as the data exchange format because it fully supports plain JSON, allowing developers to use existing tools and knowledge, but also supports its heavily optimized binary format that can greatly improve performance and reduce bandwidth. It's support for type safety, schemas and schema evolution also adresses many issues that can be seen in modern webservices, making it a great fit for the purposes of HTTP-RPC.
+
+### Endpoints
+
+HTTP-RPC uses normal URL endpoints, with paths that follow the schema 
