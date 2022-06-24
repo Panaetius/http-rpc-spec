@@ -1,5 +1,13 @@
+---
+layout: default
+title: HTTP-RPC Specification (Draft)
+---
+
+
 ## HTTP-RPC Specification (Draft)
 
+* toc
+{:toc}
 ### Introduction
 
 This is the specification for HTTP-RPC, an architectural style for modeling web services in a flexible, scalable, portable, simple and realiable way. HTTP-RPC is easy for humans to understand and develop and easy for machines to parse and interact with. Its aim is to capture and formalize approaches to web services commonly encountered in the wild and that web services organically tend to evolve towards over time, but in a structured and maintainable way.
@@ -28,7 +36,26 @@ Avro is used as the data exchange format because it fully supports plain JSON, a
 
 HTTP-RPC uses normal URL endpoints, with paths that follow the schema
 
-![URl schema](./img/url-schema.svg)
+![URl schema](./img/url-schema.svg){:class="img-responsive"}
 
 for example `https://example.com/billing/invoice.send`.
 
+The `namespace` represents a logical grouping or domain of the contained resources.
+
+A `resource` is an individual domain object, such as `user`, `invoice` or `project`.
+
+`action` is an operation that can be performed on the specified resource. It must be in verb form, such as `create`, `get`, `send`, `import`, `validate` etc.
+
+`namespace`, `resource` and `action` are limited to lower-case alphanumeric characters and `_` and must start with an alphanumeric character (`[a-z][a-z0-9_]+`).
+
+#### Methods
+
+HTTP-RPC endpoint must support the `GET` and `POST` request methods.
+
+##### GET
+
+A `GET` request must return the Avro schema for the endpoint, with the schema outlined on the section `Endpoint Schema`
+
+##### POST
+
+A `POST` request corresponds to execution of the endpoint action. It takes an Avro payload of the form outlined on the `Request payload schema` section and returns an answer outlined in the `Response payload schema` section.
