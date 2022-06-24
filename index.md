@@ -36,7 +36,7 @@ Avro is used as the data exchange format because it fully supports plain JSON, a
 
 HTTP-RPC uses normal URL endpoints, with paths that follow the schema
 
-![URl schema](./img/url-schema.svg){:class="img-responsive"}
+![URl schema](/http-rpc-spec/assets/img/url-schema.svg){:class="img-responsive"}
 
 for example `https://example.com/billing/invoice.send`.
 
