@@ -8,7 +8,15 @@ At its core, HTTP-RPC defines how endpoints should be structured and how to inte
 
 ### Overview
 
-HTTP-RPC is a standard for creating resource-oriented service endpoints that support RPC style interaction. It defines how these endpoints should be structured and organized, the base schemas to use in communication, how errors are handled and how these services can be self-describing and machine consumable. The aim is to combine the best of both worlds, being able to draw on the myriad of tool available in the HTTP/REST while benefitting from the flexibility that RPC offers, but limiting how it can be implemented to encourage implementations to stay as homogeneous as possible, improving portability over existing RPC approaches.
+HTTP-RPC is a standard for creating resource-oriented service endpoints that
+support RPC style interaction. It defines how these endpoints should be
+structured and organized, the base schemas to use in communication, how errors
+are handled and how these services can be self-describing and machine
+consumable. The aim is to combine the best of both worlds, being able to draw on
+the myriad of tool available in the HTTP/REST while benefitting from the
+flexibility that RPC offers, but limiting how it can be implemented to encourage
+implementations to stay as homogeneous as possible, improving portability over
+existing RPC approaches.
 
 ### Data Exchange Format
 
@@ -18,4 +26,9 @@ Avro is used as the data exchange format because it fully supports plain JSON, a
 
 ### Endpoints
 
-HTTP-RPC uses normal URL endpoints, with paths that follow the schema 
+HTTP-RPC uses normal URL endpoints, with paths that follow the schema
+
+![URl schema](./img/url-schema.svg)
+
+for example `https://example.com/billing/invoice.send`.
+

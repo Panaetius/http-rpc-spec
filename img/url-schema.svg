@@ -1,0 +1,7 @@
+Diagram(
+  NonTerminal("base url"),
+  Optional(Sequence("/", NonTerminal('namespace'))),
+  "/",
+  NonTerminal("resource"),
+  ".",
+  NonTerminal("action"))
