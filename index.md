@@ -32,7 +32,7 @@ HTTP-RPC uses [Avro](https://avro.apache.org/) as its data exchange format. Avro
 
 Avro is used as the data exchange format because it fully supports plain JSON, allowing developers to use existing tools and knowledge, but also supports its heavily optimized binary format that can greatly improve performance and reduce bandwidth. It's support for type safety, schemas and schema evolution also adresses many issues that can be seen in modern webservices, making it a great fit for the purposes of HTTP-RPC.
 
-### Endpoints
+### Resources
 
 HTTP-RPC uses normal URL endpoints, with paths that follow the schema
 
@@ -42,45 +42,37 @@ for example `https://example.com/billing/invoice.send`.
 
 The `namespace` represents a logical grouping or domain of the contained resources.
 
-A `resource` is an individual domain object, such as `user`, `invoice` or `project`.
+A `resource` is an individual domain object, such as `user`, `invoice` or `project`. It can be just about anything that can be named.
 
-`action` is an operation that can be performed on the specified resource. It must be in verb form, such as `create`, `get`, `send`, `import`, `validate` etc.
+`action` is an operation that can be performed on the specified resource. It must be in verb form, such as `create`, `get`, `send`, `import`, `validate` etc. All actions related to a resource should be grouped under that resource.
 
 `namespace`, `resource` and `action` are limited to lower-case alphanumeric characters and `_` and must start with an alphanumeric character (`[a-z][a-z0-9_]+`).
 
-#### Methods
+#### Resource Methods
 
-HTTP-RPC endpoint must support the `GET` and `POST` request methods.
+HTTP-RPC endpoints must support the `GET` and `POST` request methods.
 
-##### GET
+##### POST Method
 
-A `GET` request must return the Avro schema for the endpoint, with the schema outlined on the section `Endpoint Schema`
+All requests for interacting with resources have to be done through the `POST` HTTP method.
 
-##### POST
-
-A `POST` request corresponds to execution of the endpoint action. It takes an Avro payload of the form outlined on the [Request Payload schema](#request-payload-schema) section and returns an answer outlined in the [Response Payload schema](#response-payload-schema) section.
+A `POST` requests correspond to execution of the endpoint action. It takes an Avro payload as POST-body and returns a response as outlinedbelow.
 
 The HTTP Response code must always be 200.
-
-### Schemas
-
-#### Request Payload Schema
-
-#### Response Payload Schema
 
 Responses must follow the schema
 
 ```json
 {
-    "type": "record",
     "name": "Response",
+    "type": "record",
     "fields": [
         {
             "name": "result",
             "type": [
                 {
+                    "name": "...",
                     "type": "record",
-                    "name": "Result",
                     "doc": "Add type according to endpoint with matching fields",
                     "fields": []
                 }
@@ -90,8 +82,8 @@ Responses must follow the schema
             "name": "error",
             "type": ["null",
                 {
-                    "type": "record",
                     "name": "Error",
+                    "type": "record",
                     "fields":[
                         {
                             "name": "identifier",
@@ -114,8 +106,121 @@ Responses must follow the schema
 }
 ```
 
-The `Result` type above is a placeholder to be substituted with your actual response schema.
+The type in `result` is a placeholder to be substituted with your actual response type.
 
-The `identifier` on the `Error` record should be a short string error code to support automated handling of errors, e.g. `file_not_found`. The `description` field should contain a human-readable error message for consumption by users.
+The `Error` type is the standarized error response, making it easy to process errors automatically as well as being useful to users.
 
-`additionalInformation` can be filled freely with more context about an error, such as stack traces.
+The `identifier` on the `Error` record should be a short string error code to
+support automated handling of errors, e.g. `file_not_found`. Error codes must be
+unique to the error raised.
+
+The `description` field should contain a human-readable error message for consumption by users.
+
+`additionalInformation` can be filled freely with more context about an error, such as stack traces or translated error messages.
+
+##### GET Method
+
+A `GET` request must return the Avro schema for the endpoint, with the schema outlined in the section [Self-Descriptive](#self-descriptive). This allows clients to get all necessary information about the resource and its action dynamically and can also be used to verify responses from the service.
+
+Responses must follow the schema:
+
+```json
+{
+    "name": "ActionSchema",
+    "type": "record",
+    "fields": [
+        {
+            "name": "namespace",
+            "type": "string"
+        },
+        {
+            "name": "resource",
+            "type": "string"
+        },
+        {
+            "name": "action",
+            "type": "string"
+        },
+        {
+            "name": "description",
+            "type": "string"
+        },
+        {
+            "name": "RequestSchema",
+            "type": {
+                "name": "...",
+                "type": "record",
+                "doc": "Add type according to endpoint request",
+                "fields": []
+            }
+        },
+        {
+            "name": "ResponseSchema",
+            "type": {
+                "name": "...",
+                "type": "record",
+                "doc": "Add type according to endpoint response",
+                "fields": []
+            }
+        }
+    ]
+}
+```
+
+#### Self-Descriptive
+
+HTTP-RPC services should be completely self-descriptive. All a client has to know is the base URL of the service.
+
+Doing a `GET` request on any action endpoint returns the request and response schemas for that endpoint.
+
+Doing a `GET` request on the base URL returns a description of all namespaces, their resources and their actions. The base URL endpoint must respond with the following schema:
+
+``` json
+{
+    "name": "ServiceSchema",
+    "type": "record",
+    "fields": [
+        {
+            "name": "namespaces",
+            "type": "array",
+            "items": {
+                "name": "NamespaceSchema",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "namespace",
+                        "type": "string"
+                    },
+                    {
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "resources",
+                        "type": "array",
+                        "items": {
+                            "name": "ResourceSchema",
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "name": "resource",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "description",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "actions",
+                                    "type": "array",
+                                    "items": "ActionSchema"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
