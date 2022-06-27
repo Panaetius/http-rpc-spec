@@ -58,4 +58,64 @@ A `GET` request must return the Avro schema for the endpoint, with the schema ou
 
 ##### POST
 
-A `POST` request corresponds to execution of the endpoint action. It takes an Avro payload of the form outlined on the `Request payload schema` section and returns an answer outlined in the `Response payload schema` section.
+A `POST` request corresponds to execution of the endpoint action. It takes an Avro payload of the form outlined on the [Request Payload schema](#request-payload-schema) section and returns an answer outlined in the [Response Payload schema](#response-payload-schema) section.
+
+The HTTP Response code must always be 200.
+
+### Schemas
+
+#### Request Payload Schema
+
+#### Response Payload Schema
+
+Responses must follow the schema
+
+```json
+{
+    "type": "record",
+    "name": "Response",
+    "fields": [
+        {
+            "name": "result",
+            "type": [
+                {
+                    "type": "record",
+                    "name": "Result",
+                    "doc": "Add type according to endpoint with matching fields",
+                    "fields": []
+                }
+                , "null"]
+        },
+        {
+            "name": "error",
+            "type": ["null",
+                {
+                    "type": "record",
+                    "name": "Error",
+                    "fields":[
+                        {
+                            "name": "identifier",
+                            "type": "string"
+                        },
+                        {
+                            "name": "description",
+                            "type": "string"
+                        },
+                        {
+                            "name": "additionalInformation",
+                            "type": "map",
+                            "values": "string"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+```
+
+The `Result` type above is a placeholder to be substituted with your actual response schema.
+
+The `identifier` on the `Error` record should be a short string error code to support automated handling of errors, e.g. `file_not_found`. The `description` field should contain a human-readable error message for consumption by users.
+
+`additionalInformation` can be filled freely with more context about an error, such as stack traces.
