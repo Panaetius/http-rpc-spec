@@ -7,3 +7,4 @@
 - define some standard error codes
 - add flask based framework
 - ad js based client
+- deadlines/timeouts for calls?

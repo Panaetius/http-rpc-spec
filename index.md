@@ -32,6 +32,21 @@ HTTP-RPC uses [Avro](https://avro.apache.org/) as its data exchange format. Avro
 
 Avro is used as the data exchange format because it fully supports plain JSON, allowing developers to use existing tools and knowledge, but also supports its heavily optimized binary format that can greatly improve performance and reduce bandwidth. It's support for type safety, schemas and schema evolution also adresses many issues that can be seen in modern webservices, making it a great fit for the purposes of HTTP-RPC.
 
+
+### HTTP/2
+
+All HTTP-RPC servers must support HTTP/2. This allows a single connection to be used for all requests, in parallel, due to HTTP/2 multiplexing as well as allowing binary data to be sent or streamed more efficiently. HTTP/1.1 can be offered as a fallback if a client doesn't support HTTP/2, but is not strictly required.
+
+#### Streaming
+
+In addition to normal request-response  communication, HTTP-RPC also supports streaming of requests/responses using HTTP/2 streams. Request streams, response streams and bidirectional streaming are supported.
+
+#### Headers
+
+Most HTTP headers should work as normal with HTTP-RPC. Headers starting with `http-rpc-` are reserved for future use by the protocol.
+
+Namely, you can use `Authorization` header for authentication, e.g. using OAuth2, `Access-Control-Allow-Origin` for Cross-origin Resource Sharing (CORS), `Cache-Control` for HTTP caching, `Set-Cookie`/`Cookie` for HTTP cookies, `Location` for redirects and so on.
+
 ### Resources
 
 HTTP-RPC uses normal URL endpoints, with paths that follow the schema
@@ -224,3 +239,59 @@ Doing a `GET` request on the base URL returns a description of all namespaces, t
     ]
 }
 ```
+
+
+#### Interoperability with plain HTTP
+
+Sometimes it might be neccessary to break with convention and have different content types and endpoints that don't follow the HTTP-RPC schema. For instance, client libraries that use `Content-Type: multipart/form-data` to upload files or endpoints that serve files directly using their respective MIME type. Ideally, these types of requests should still use HTTP-RPC and send data as binary in the Request/Response bodies and use of the interoperability feature is discouraged.
+
+But for interoperability with existing libraries and browser functionality, HTTP-RPC allows mixing plain HTTP endpoints with HTTP-RPC endpoints. These types of endpoints need to be clearly distinguished from HTTP-RPC endpoints to avoid confusion. To this end, these endpoints must have routes like `<namespace>/external/<path>`, where `<path>` can be an arbitrary path.
+
+These endpoints should still be specified in the main service schema:
+
+``` json
+{
+    "name": "ServiceSchema",
+    "type": "record",
+    "fields": [
+        {
+            "name": "namespaces",
+            "type": "array",
+            "items": {
+                "name": "NamespaceSchema",
+                "type": "record",
+                "fields": [
+                    {
+                        "name": "namespace",
+                        "type": "string"
+                    },
+                    {
+                        "name": "description",
+                        "type": "string"
+                    },
+                    {
+                        "name": "external_resources",
+                        "type": "array",
+                        "items": {
+                            "name": "ExternalResourceSchema",
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "name": "path",
+                                    "type": "string"
+                                },
+                                {
+                                    "name": "description",
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+```
+
+HTTP-RPC implementation are free to handle these plain HTTP endpoints themselves, for example by delegating to an underlying framework, or to forward those requests to another server implementation. None of the HTTP-RPC specific rules apply to these endpoints, other than the rule for the path format and the specification in the schema.
