@@ -1,0 +1,9 @@
+- add bidirectional streaming description
+- add introduction page
+- fully define whole service schema
+- define scaling/load-balancing approaches
+- define use of headers
+- define how to combine with non-http-rpc endpoints (where needed) for file uploads
+- define some standard error codes
+- add flask based framework
+- ad js based client
