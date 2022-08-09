@@ -43,9 +43,20 @@ In addition to normal request-response  communication, HTTP-RPC also supports st
 
 #### Headers
 
-Most HTTP headers should work as normal with HTTP-RPC. Headers starting with `http-rpc-` are reserved for future use by the protocol.
+Most HTTP Request headers should work as normal with HTTP-RPC. Headers starting with `http-rpc-` are reserved for future use by the protocol.
 
 Namely, you can use `Authorization` header for authentication, e.g. using OAuth2, `Access-Control-Allow-Origin` for Cross-origin Resource Sharing (CORS), `Cache-Control` for HTTP caching, `Set-Cookie`/`Cookie` for HTTP cookies, `Location` for redirects and so on.
+
+Similarily, HTTP Response headers should also work as expected.
+
+##### HTTP-RPC Specific Request Headers
+
+- **http-rpc-timeout**: Timeout for the request, after which the server must cancel it and return an error response. Positive integer followed by a unit, e.g. `15s`. Allowed units are `H`(hour), `M`(minute), `s`(second), `m`(millisecond).
+- **http-rpc-compression**: Compression to use in the response, defaults to `none`. Possible values are `none`(No Compression), `gzip` (GZip compression), `zstd` (ZStandard compression), `snappy` (snappy compression). Custom compressions can also be added and supported by implementations.
+
+##### HTTP-RPC Specific Response Headers
+
+- **http-rpc-compression**: Compression used in the response. Possible values are `none`(No Compression), `gzip` (GZip compression), `zstd` (ZStandard compression), `snappy` (snappy compression). Custom compressions can also be added and supported by implementations.
 
 ### Resources
 
