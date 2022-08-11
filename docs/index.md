@@ -1,8 +1,6 @@
 ---
-layout: default
 title: HTTP-RPC Specification (Draft)
 ---
-
 
 ## HTTP-RPC Specification (Draft)
 
@@ -62,7 +60,7 @@ Similarily, HTTP Response headers should also work as expected.
 
 HTTP-RPC uses normal URL endpoints, with paths that follow the schema
 
-![URl schema](/http-rpc-spec/assets/img/url-schema.svg){:class="img-responsive"}
+![URl schema](/assets/img/url-schema.svg){:class="img-responsive"}
 
 for example `https://example.com/billing/invoice.send`.
 
