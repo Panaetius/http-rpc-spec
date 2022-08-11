@@ -1,12 +1,29 @@
+site_name: HTTP-RPC Specification
+repo_name: "Panaetius/http-rpc-spec"
+repo_url: "https://github.com/Panaetius/http-rpc-spec"
 nav:
     - 'index.md'
+    - 'specification.md'
     - 'todo.md'
 theme:
   name: material
   features:
     - content.code.annotate
-
-site_name: HTTP-RPC Specification
+    - navigation.instant
+  custom_dir: docs/overrides
+  palette: # https://www.materialpalette.com/colors
+    - scheme: default
+      #primary: "teal" # comment to replace by /docs/assets/stylesheets
+      accent: deep purple
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      #primary: "teal" # comment to replace by /docs/assets/stylesheets
+      accent: teal
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
@@ -21,3 +38,5 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+extra_css:
+    - assets/stylesheets/extra.css
