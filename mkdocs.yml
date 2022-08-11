@@ -1,0 +1,5 @@
+nav:
+    - 'index.md'
+    - 'todo.md'
+theme:
+  name: material

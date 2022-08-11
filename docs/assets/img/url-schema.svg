@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg class="railroad-diagram" width="652" height="71" viewBox="0 0 652 71" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g transform="translate(.5 .5)">
+<g>
+<path d="M20 30v20m10 -20v20m-10 -10h20"></path>
+</g>
+<path d="M40 40h10"></path>
+<g class="non-terminal ">
+<path d="M50 40h0"></path>
+<path d="M134 40h0"></path>
+<rect x="50" y="29" width="84" height="22"></rect>
+<text x="92" y="44">base url</text>
+</g>
+<path d="M134 40h10"></path>
+<g>
+<path d="M144 40h0"></path>
+<path d="M324 40h0"></path>
+<path d="M144 40a10 10 0 0 0 10 -10v0a10 10 0 0 1 10 -10"></path>
+<g>
+<path d="M164 20h140"></path>
+</g>
+<path d="M304 20a10 10 0 0 1 10 10v0a10 10 0 0 0 10 10"></path>
+<path d="M144 40h20"></path>
+<g>
+<path d="M164 40h0"></path>
+<path d="M304 40h0"></path>
+<g class="terminal ">
+<path d="M164 40h0"></path>
+<path d="M192 40h0"></path>
+<rect x="164" y="29" width="28" height="22" rx="10" ry="10"></rect>
+<text x="178" y="44">/</text>
+</g>
+<path d="M192 40h10"></path>
+<path d="M202 40h10"></path>
+<g class="non-terminal ">
+<path d="M212 40h0"></path>
+<path d="M304 40h0"></path>
+<rect x="212" y="29" width="92" height="22"></rect>
+<text x="258" y="44">namespace</text>
+</g>
+</g>
+<path d="M304 40h20"></path>
+</g>
+<path d="M324 40h10"></path>
+<g class="terminal ">
+<path d="M334 40h0"></path>
+<path d="M362 40h0"></path>
+<rect x="334" y="29" width="28" height="22" rx="10" ry="10"></rect>
+<text x="348" y="44">/</text>
+</g>
+<path d="M362 40h10"></path>
+<path d="M372 40h10"></path>
+<g class="non-terminal ">
+<path d="M382 40h0"></path>
+<path d="M466 40h0"></path>
+<rect x="382" y="29" width="84" height="22"></rect>
+<text x="424" y="44">resource</text>
+</g>
+<path d="M466 40h10"></path>
+<path d="M476 40h10"></path>
+<g class="terminal ">
+<path d="M486 40h0"></path>
+<path d="M514 40h0"></path>
+<rect x="486" y="29" width="28" height="22" rx="10" ry="10"></rect>
+<text x="500" y="44">.</text>
+</g>
+<path d="M514 40h10"></path>
+<path d="M524 40h10"></path>
+<g class="non-terminal ">
+<path d="M534 40h0"></path>
+<path d="M602 40h0"></path>
+<rect x="534" y="29" width="68" height="22"></rect>
+<text x="568" y="44">action</text>
+</g>
+<path d="M602 40h10"></path>
+<path d="M 612 40 h 20 m -10 -10 v 20 m 10 -20 v 20"></path>
+</g>
+<style>
+	svg {
+		background-color: hsl(30,20%,95%);
+	}
+	path {
+		stroke-width: 3;
+		stroke: black;
+		fill: rgba(0,0,0,0);
+	}
+	text {
+		font: bold 14px monospace;
+		text-anchor: middle;
+		white-space: pre;
+	}
+	text.diagram-text {
+		font-size: 12px;
+	}
+	text.diagram-arrow {
+		font-size: 16px;
+	}
+	text.label {
+		text-anchor: start;
+	}
+	text.comment {
+		font: italic 12px monospace;
+	}
+	g.non-terminal text {
+		/&#42;font-style: italic;&#42;/
+	}
+	rect {
+		stroke-width: 3;
+		stroke: black;
+		fill: hsl(120,100%,90%);
+	}
+	rect.group-box {
+		stroke: gray;
+		stroke-dasharray: 10 5;
+		fill: none;
+	}
+	path.diagram-text {
+		stroke-width: 3;
+		stroke: black;
+		fill: white;
+		cursor: help;
+	}
+	g.diagram-text:hover path.diagram-text {
+		fill: #eee;
+	}</style>
+</svg>
