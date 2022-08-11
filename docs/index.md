@@ -1,18 +1,13 @@
 ---
 title: HTTP-RPC Specification (Draft)
 ---
-
-## HTTP-RPC Specification (Draft)
-
-* toc
-{:toc}
-### Introduction
+## Introduction
 
 This is the specification for HTTP-RPC, an architectural style for modeling web services in a flexible, scalable, portable, simple and realiable way. HTTP-RPC is easy for humans to understand and develop and easy for machines to parse and interact with. Its aim is to capture and formalize approaches to web services commonly encountered in the wild and that web services organically tend to evolve towards over time, but in a structured and maintainable way.
 
 At its core, HTTP-RPC defines how endpoints should be structured and how to interact with them and with each other, how errors should be handled, how data exchange happens and how this get documented.
 
-### Overview
+## Overview
 
 HTTP-RPC is a standard for creating resource-oriented service endpoints that
 support RPC style interaction. It defines how these endpoints should be
@@ -24,22 +19,22 @@ flexibility that RPC offers, but limiting how it can be implemented to encourage
 implementations to stay as homogeneous as possible, improving portability over
 existing RPC approaches.
 
-### Data Exchange Format
+## Data Exchange Format
 
 HTTP-RPC uses [Avro](https://avro.apache.org/) as its data exchange format. Avro itself already defines ways of RPC communication, but HTTP-RPC aims to fit the context of modern service-oriented architectures better than a single-point RPC service like Avros can. It also tries to cover use-cases that are left unspecified in an RPC specification like Avro.
 
 Avro is used as the data exchange format because it fully supports plain JSON, allowing developers to use existing tools and knowledge, but also supports its heavily optimized binary format that can greatly improve performance and reduce bandwidth. It's support for type safety, schemas and schema evolution also adresses many issues that can be seen in modern webservices, making it a great fit for the purposes of HTTP-RPC.
 
 
-### HTTP/2
+## HTTP/2
 
 All HTTP-RPC servers must support HTTP/2. This allows a single connection to be used for all requests, in parallel, due to HTTP/2 multiplexing as well as allowing binary data to be sent or streamed more efficiently. HTTP/1.1 can be offered as a fallback if a client doesn't support HTTP/2, but is not strictly required.
 
-#### Streaming
+### Streaming
 
 In addition to normal request-response  communication, HTTP-RPC also supports streaming of requests/responses using HTTP/2 streams. Request streams, response streams and bidirectional streaming are supported.
 
-#### Headers
+### Headers
 
 Most HTTP Request headers should work as normal with HTTP-RPC. Headers starting with `http-rpc-` are reserved for future use by the protocol.
 
@@ -47,7 +42,7 @@ Namely, you can use `Authorization` header for authentication, e.g. using OAuth2
 
 Similarily, HTTP Response headers should also work as expected.
 
-##### HTTP-RPC Specific Request Headers
+#### HTTP-RPC Specific Request Headers
 
 - **http-rpc-timeout**: Timeout for the request, after which the server must cancel it and return an error response. Positive integer followed by a unit, e.g. `15s`. Allowed units are `H`(hour), `M`(minute), `s`(second), `m`(millisecond).
 - **http-rpc-compression**: Compression to use in the response, defaults to `none`. Possible values are `none`(No Compression), `gzip` (GZip compression), `zstd` (ZStandard compression), `snappy` (snappy compression). Custom compressions can also be added and supported by implementations.
@@ -56,11 +51,11 @@ Similarily, HTTP Response headers should also work as expected.
 
 - **http-rpc-compression**: Compression used in the response. Possible values are `none`(No Compression), `gzip` (GZip compression), `zstd` (ZStandard compression), `snappy` (snappy compression). Custom compressions can also be added and supported by implementations.
 
-### Resources
+## Resources
 
 HTTP-RPC uses normal URL endpoints, with paths that follow the schema
 
-![URl schema](/assets/img/url-schema.svg){:class="img-responsive"}
+![URl schema](/assets/img/url-schema.svg)
 
 for example `https://example.com/billing/invoice.send`.
 
@@ -72,11 +67,11 @@ A `resource` is an individual domain object, such as `user`, `invoice` or `proje
 
 `namespace`, `resource` and `action` are limited to lower-case alphanumeric characters and `_` and must start with an alphanumeric character (`[a-z][a-z0-9_]+`).
 
-#### Resource Methods
+### Resource Methods
 
 HTTP-RPC endpoints must support the `GET` and `POST` request methods.
 
-##### POST Method
+#### POST Method
 
 All requests for interacting with resources have to be done through the `POST` HTTP method.
 
@@ -88,37 +83,37 @@ Responses must follow the schema
 
 ```json
 {
-    "name": "Response",
+    "name": "Response", // (1)
     "type": "record",
     "fields": [
         {
-            "name": "result",
+            "name": "result", // (2)
             "type": [
                 {
-                    "name": "...",
+                    "name": "...", // (3)
                     "type": "record",
-                    "doc": "Add type according to endpoint with matching fields",
+                    "doc": "Add type according to endpoint with matching fields", // (4)
                     "fields": []
                 }
                 , "null"]
         },
         {
-            "name": "error",
+            "name": "error", // (5)
             "type": ["null",
                 {
-                    "name": "Error",
+                    "name": "Error", // (6)
                     "type": "record",
                     "fields":[
                         {
-                            "name": "identifier",
+                            "name": "identifier", // (7)
                             "type": "string"
                         },
                         {
-                            "name": "description",
+                            "name": "description", // (8)
                             "type": "string"
                         },
                         {
-                            "name": "additionalInformation",
+                            "name": "additionalInformation", // (9)
                             "type": "map",
                             "values": "string"
                         }
@@ -129,6 +124,16 @@ Responses must follow the schema
     ]
 }
 ```
+
+1. All response schemas are of type `Response`
+2. The result of a request, if everything went well
+3. Name this type to whatever type your request returns and fill in the schema with the relevant fields
+4. The doc string is mandatory and is used to describe the endpoint functionality in human readable form
+5. The error field can be empty, if everything worked or contain an error record if something failed in the application code
+6. All errors must follow the error schema
+7. The error identifier should be an alphanumeric string that allows handling the error by code
+8. The description contains human readable text about the error, why it happened and how it could be fixed, if possible
+9. this field allows sending additional context for the error, such as stacktraces, translations of the error message or further context
 
 The type in `result` is a placeholder to be substituted with your actual response type.
 
@@ -142,7 +147,7 @@ The `description` field should contain a human-readable error message for consum
 
 `additionalInformation` can be filled freely with more context about an error, such as stack traces or translated error messages.
 
-##### GET Method
+#### GET Method
 
 A `GET` request must return the Avro schema for the endpoint, with the schema outlined in the section [Self-Descriptive](#self-descriptive). This allows clients to get all necessary information about the resource and its action dynamically and can also be used to verify responses from the service.
 
@@ -191,7 +196,7 @@ Responses must follow the schema:
 }
 ```
 
-#### Self-Descriptive
+### Self-Descriptive
 
 HTTP-RPC services should be completely self-descriptive. All a client has to know is the base URL of the service.
 
@@ -250,7 +255,7 @@ Doing a `GET` request on the base URL returns a description of all namespaces, t
 ```
 
 
-#### Interoperability with plain HTTP
+### Interoperability with plain HTTP
 
 Sometimes it might be neccessary to break with convention and have different content types and endpoints that don't follow the HTTP-RPC schema. For instance, client libraries that use `Content-Type: multipart/form-data` to upload files or endpoints that serve files directly using their respective MIME type. Ideally, these types of requests should still use HTTP-RPC and send data as binary in the Request/Response bodies and use of the interoperability feature is discouraged.
 
